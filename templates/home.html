@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple User Input</title>
+</head>
+<body>
+    <h1>Enter Your Details</h1>
+    <form action="/submit" method="POST">
+        <label for="age">How old are you?</label>
+        <input type="text" id="age" name="age" required><br><br>
+
+        <label for="gender">Are you a man or a woman?</label>
+        <input type="text" id="gender" name="gender" required><br><br>
+
+        <label for="state">How are you?</label>
+        <input type="text" id="state" name="state" required><br><br>
+
+        <input type="submit" value="Submit">
+    </form>
+</body>
+</html>
