@@ -1,11 +1,1 @@
-from flask import Flask, render_template, request
 
-app = Flask(__name__)
-
- # I made a change here. 
-# same api keys 
-
-# Route for the home page (form input)
-@app.route('/')
-def home():
-    return render_template('home.html')
