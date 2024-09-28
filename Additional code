@@ -1,0 +1,69 @@
+import requests
+
+# Replace these with your Edamam API credentials
+APP_ID = 'your_app_id'
+APP_KEY = 'your_app_key'
+
+
+def fetch_recipes_from_edamam(ingredient, max_results=5):
+    url = f'https://api.edamam.com/search?q={ingredient}&app_id={APP_ID}&app_key={APP_KEY}&to={max_results}'
+
+    response = requests.get(url)
+    data = response.json()
+
+    if 'hits' not in data or len(data['hits']) == 0:
+        return "No recipes found for this ingredient."
+
+    # Parse the recipes
+    recipes = []
+    for hit in data['hits']:
+        recipe = hit['recipe']
+        is_vegan = 'Vegan' in recipe['healthLabels']  # Check if the recipe is labeled as vegan
+
+        recipes.append({
+            "name": recipe['label'],
+            "ingredients": recipe['ingredientLines'],
+            "carbs_per_serving": round(recipe['totalNutrients']['CHOCDF']['quantity'] / recipe['yield'], 2),
+            # Carbs per serving
+            "vegan": is_vegan,  # Add vegan label
+            "url": recipe['url']
+        })
+
+    return recipes
+
+
+def filter_low_carb(recipe_list, max_carbs):
+    # Filter recipes based on the carb count
+    return [recipe for recipe in recipe_list if recipe['carbs_per_serving'] <= max_carbs]
+
+
+# Input ingredient
+ingredient_input = input("Enter an ingredient: ")
+recipes_found = fetch_recipes_from_edamam(ingredient_input)
+
+if isinstance(recipes_found, list):
+    print(f"Recipes with {ingredient_input}:")
+    for recipe in recipes_found:
+        vegan_label = " (Vegan)" if recipe['vegan'] else ""
+        print(f" - {recipe['name']}{vegan_label} (Carbs per serving: {recipe['carbs_per_serving']}g)")
+        print(f"   Recipe link: {recipe['url']}")
+
+    # Ask if the user wants to filter for low-carb recipes
+    filter_choice = input("Do you want to filter for low-carb recipes? (yes/no): ").lower()
+
+    if filter_choice == "yes":
+        max_carbs = int(input("Enter the maximum carbs per serving: "))
+        low_carb_recipes = filter_low_carb(recipes_found, max_carbs)
+
+        if low_carb_recipes:
+            print(f"\nLow-carb recipes with {ingredient_input} (Max {max_carbs}g carbs):")
+            for recipe in low_carb_recipes:
+                vegan_label = " (Vegan)" if recipe['vegan'] else ""
+                print(f" - {recipe['name']}{vegan_label} (Carbs per serving: {recipe['carbs_per_serving']}g)")
+                print(f"   Recipe link: {recipe['url']}")
+        else:
+            print(f"No low-carb recipes found for {ingredient_input} under {max_carbs}g carbs.")
+    else:
+        print("No filter applied.")
+else:
+    print(recipes_found)
