@@ -19,25 +19,24 @@ params = {
     'app_key':APP_KEY
 }
 response = requests.get(url, params=params)
+data = response.json()
 
+    if 'hits' not in data or len(data['hits']) == 0:
+        return "No recipes found for this ingredient."
 
-        'diet': 'low-carb',  # This filters the results for low-carb recipes
-        'from': 0,
-        'to': 5  # Fetch 5 recipes
-    }
+    # Parse the recipes
+    recipes = []
+    for hit in data['hits']:
+        recipe = hit['recipe']
+        is_vegan = 'Vegan' in recipe['healthLabels']  # Check if the recipe is labeled as vegan
 
-    response = requests.get(recipe_url, params=recipe_params)
-    recipes = response.json()
+        recipes.append({
+            "name": recipe['label'],
+            "ingredients": recipe['ingredientLines'],
+            "carbs_per_serving": round(recipe['totalNutrients']['CHOCDF']['quantity'] / recipe['yield'], 2),
+            # Carbs per serving
+            "vegan": is_vegan,  # Add vegan label
+            "url": recipe['url']
+        })
 
-    # Step 4: Display the recipe suggestions
-    if recipes['hits']:
-        print(f"Here are some low-carb recipes with {ingredient}:")
-        for hit in recipes['hits']:
-            recipe = hit['recipe']
-            print(f"- {recipe['label']} ({recipe['calories']} calories)")
-            print(f"  URL: {recipe['url']}")
-    else:
-        print(f"Sorry, no low-carb recipes found with {ingredient}.")
-
-else:
-    print("Enjoy your meal out!")
+    return recipes
