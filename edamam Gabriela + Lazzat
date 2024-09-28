@@ -1,3 +1,21 @@
-Sabina's text
-lazzat s text
-Gabriela's text
+dinner_plans=input("Are you eating in tonight?y/n:")
+if dinner_plans=='y':
+    print("Don't know what to make? We'll help you decide!")
+else:
+    print("Enjoy your meal out!")
+
+import requests
+
+APP_ID = 'dde6daa4'
+APP_KEY = '009a9a1781b7e3e669a08caeb948525f'
+
+ingredient = input("Enter one ingredient that is in your fridge:")
+
+url = 'https://api.edamam.com/api/food-database/v2/parser'
+
+params = {
+    'ingr':ingredient,
+    'app_id':APP_ID,
+    'app_key':APP_KEY
+}
+response = requests.get(url, params=params)
