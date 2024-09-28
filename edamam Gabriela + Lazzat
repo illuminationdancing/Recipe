@@ -19,3 +19,25 @@ params = {
     'app_key':APP_KEY
 }
 response = requests.get(url, params=params)
+
+
+        'diet': 'low-carb',  # This filters the results for low-carb recipes
+        'from': 0,
+        'to': 5  # Fetch 5 recipes
+    }
+
+    response = requests.get(recipe_url, params=recipe_params)
+    recipes = response.json()
+
+    # Step 4: Display the recipe suggestions
+    if recipes['hits']:
+        print(f"Here are some low-carb recipes with {ingredient}:")
+        for hit in recipes['hits']:
+            recipe = hit['recipe']
+            print(f"- {recipe['label']} ({recipe['calories']} calories)")
+            print(f"  URL: {recipe['url']}")
+    else:
+        print(f"Sorry, no low-carb recipes found with {ingredient}.")
+
+else:
+    print("Enjoy your meal out!")
