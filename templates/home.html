@@ -3,21 +3,155 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Simple User Input</title>
+    <title>Recipe Finder</title>
+    <style>
+        /* Basic reset for margins and padding */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* Remove flex layout to avoid content cut-off */
+        html, body {
+            min-height: 100%; /* Ensure full height when content is less */
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            display: block; /* Change from flex to block layout */
+        }
+
+        /* Center the content horizontally */
+        .container {
+            text-align: center;
+            background-color: #fff;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+            max-width: 900px;
+            margin: 40px auto; /* Auto-margin centers it horizontally */
+        }
+
+        h1 {
+            margin-bottom: 20px;
+            font-size: 24px;
+        }
+
+        label {
+            font-size: 18px;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        input[type="text"], input[type="submit"] {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0 20px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        input[type="submit"] {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        input[type="submit"]:hover {
+            background-color: #45a049;
+        }
+
+        /* Recipe Grid Styles */
+        .recipe-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 40px; /* Space between the form and the recipes */
+        }
+
+        .recipe-item {
+            background-color: #fff;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            padding: 15px;
+            text-align: left;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .recipe-item img {
+            width: 100%;
+            height: auto;
+            border-radius: 10px;
+        }
+
+        .recipe-item h2 {
+            font-size: 18px;
+            margin: 10px 0;
+        }
+
+        .recipe-item p {
+            font-size: 14px;
+            margin: 5px 0;
+        }
+
+        .recipe-item a {
+            display: inline-block;
+            margin-top: 10px;
+            padding: 10px 15px;
+            background-color: #4CAF50;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+
+        .recipe-item a:hover {
+            background-color: #45a049;
+        }
+    </style>
 </head>
 <body>
-    <h1>Enter Your Details</h1>
-    <form action="/submit" method="POST">
-        <label for="age">How old are you?</label>
-        <input type="text" id="age" name="age" required><br><br>
 
-        <label for="gender">Are you a man or a woman?</label>
-        <input type="text" id="gender" name="gender" required><br><br>
+    <div class="container">
+        {% if not recipes %}
+        <!-- Show the form if no recipes have been submitted -->
+        <h1>Dinner Plans</h1>
+        <form action="/dinner" method="POST">
+            <label for="dinner_plans">Are you eating in tonight? y/n</label>
+            <input type="text" id="dinner_plans" name="dinner_plans" required>
 
-        <label for="state">How are you?</label>
-        <input type="text" id="state" name="state" required><br><br>
+            <label for="ingredient">Enter one ingredient that is in your fridge</label>
+            <input type="text" id="ingredient" name="ingredient" required>
 
-        <input type="submit" value="Submit">
-    </form>
+            <input type="submit" value="Submit Dinner Plans">
+        </form>
+        {% endif %}
+
+        {% if message %}
+        <!-- Output message if form was submitted but no recipes found or not eating in -->
+        <div class="output">
+            <h2>{{ message }}</h2>
+        </div>
+        {% endif %}
+
+        {% if recipes %}
+        <!-- Show the recipe grid only when recipes are available -->
+        <div class="recipe-grid">
+            {% for recipe in recipes %}
+            <div class="recipe-item">
+                <img src="{{ recipe.image }}" alt="{{ recipe.name }}">
+                <h2>{{ recipe.name }}</h2>
+                <p><strong>Ingredients:</strong> {{ ', '.join(recipe.ingredients) }}</p>
+                <p><strong>Carbs per serving:</strong> {{ recipe.carbs_per_serving }}g</p>
+                <p><strong>Vegan:</strong> {{ 'Yes' if recipe.vegan else 'No' }}</p>
+                <a href="{{ recipe.url }}" target="_blank">View Full Recipe</a>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+    </div>
+
 </body>
 </html>
