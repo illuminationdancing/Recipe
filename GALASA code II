@@ -5,7 +5,7 @@ if dinner_plans.lower() == 'y':
     print("Don't know what to make? We'll help you decide!")
 else:
     print("Enjoy your meal out!")
-    exit()  # Exit if not eating in
+    exit() 
 
 APP_ID = 'dde6daa4'
 APP_KEY = '009a9a1781b7e3e669a08caeb948525f'
